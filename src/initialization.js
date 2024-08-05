@@ -1,7 +1,7 @@
 var initialization = {
     name: 'ID5',
     moduleId: '',
-/*  ****** Fill out initForwarder to load your SDK ******
+    /*  ****** Fill out initForwarder to load your SDK ******
     Note that not all arguments may apply to your SDK initialization.
     These are passed from mParticle, but leave them even if they are not being used.
     forwarderSettings contain settings that your SDK requires in order to initialize

@@ -1,5 +1,5 @@
 /* eslint-disable no-undef*/
-describe('XYZ Forwarder', function () {
+describe('ID5 Forwarder', function () {
     // -------------------DO NOT EDIT ANYTHING BELOW THIS LINE-----------------------
     var MessageType = {
             SessionStart: 1,
@@ -70,9 +70,9 @@ describe('XYZ Forwarder', function () {
         },
         reportService = new ReportingService();
 
-// -------------------DO NOT EDIT ANYTHING ABOVE THIS LINE-----------------------
-// -------------------START EDITING BELOW:-----------------------
-// -------------------mParticle stubs - Add any additional stubbing to our methods as needed-----------------------
+    // -------------------DO NOT EDIT ANYTHING ABOVE THIS LINE-----------------------
+    // -------------------START EDITING BELOW:-----------------------
+    // -------------------mParticle stubs - Add any additional stubbing to our methods as needed-----------------------
     mParticle.Identity = {
         getCurrentUser: function() {
             return {
@@ -83,8 +83,8 @@ describe('XYZ Forwarder', function () {
             };
         }
     };
-// -------------------START EDITING BELOW:-----------------------
-    var MockXYZForwarder = function() {
+    // -------------------START EDITING BELOW:-----------------------
+    var MockID5Forwarder = function() {
         var self = this;
 
         // create properties for each type of event you want tracked, see below for examples
@@ -143,7 +143,7 @@ describe('XYZ Forwarder', function () {
     });
 
     beforeEach(function() {
-        window.MockXYZForwarder = new MockXYZForwarder();
+        window.MockID5Forwarder = new MockID5Forwarder();
         // Include any specific settings that is required for initializing your SDK here
         var sdkSettings = {
             clientKey: '123456',
@@ -179,9 +179,9 @@ describe('XYZ Forwarder', function () {
         //         category: 'category'
         //     }
         // });
-        
-        // window.MockXYZForwarder.eventProperties[0].label.should.equal('label');
-        // window.MockXYZForwarder.eventProperties[0].value.should.equal(200);
+
+        // window.MockID5Forwarder.eventProperties[0].label.should.equal('label');
+        // window.MockID5Forwarder.eventProperties[0].value.should.equal(200);
 
         done();
     });
@@ -196,10 +196,10 @@ describe('XYZ Forwarder', function () {
         //     }
         // });
         //
-        // window.MockXYZForwarder.trackCustomEventCalled.should.equal(true);
-        // window.MockXYZForwarder.trackCustomName.should.equal('test name');
-        // window.MockXYZForwarder.eventProperties[0].attr1.should.equal('test1');
-        // window.MockXYZForwarder.eventProperties[0].attr2.should.equal('test2');
+        // window.MockID5Forwarder.trackCustomEventCalled.should.equal(true);
+        // window.MockID5Forwarder.trackCustomName.should.equal('test name');
+        // window.MockID5Forwarder.eventProperties[0].attr1.should.equal('test1');
+        // window.MockID5Forwarder.eventProperties[0].attr2.should.equal('test2');
 
         done();
     });
@@ -233,18 +233,18 @@ describe('XYZ Forwarder', function () {
         //     }
         // });
         //
-        // window.MockXYZForwarder.trackCustomEventCalled.should.equal(true);
-        // window.MockXYZForwarder.trackCustomName.should.equal('Purchase');
+        // window.MockID5Forwarder.trackCustomEventCalled.should.equal(true);
+        // window.MockID5Forwarder.trackCustomName.should.equal('Purchase');
         //
-        // window.MockXYZForwarder.eventProperties[0].Sku.should.equal('12345');
-        // window.MockXYZForwarder.eventProperties[0].Name.should.equal('iPhone 6');
-        // window.MockXYZForwarder.eventProperties[0].Category.should.equal('Phones');
-        // window.MockXYZForwarder.eventProperties[0].Brand.should.equal('iPhone');
-        // window.MockXYZForwarder.eventProperties[0].Variant.should.equal('6');
-        // window.MockXYZForwarder.eventProperties[0].Price.should.equal(400);
-        // window.MockXYZForwarder.eventProperties[0].TotalAmount.should.equal(400);
-        // window.MockXYZForwarder.eventProperties[0].CouponCode.should.equal('coupon-code');
-        // window.MockXYZForwarder.eventProperties[0].Quantity.should.equal(1);
+        // window.MockID5Forwarder.eventProperties[0].Sku.should.equal('12345');
+        // window.MockID5Forwarder.eventProperties[0].Name.should.equal('iPhone 6');
+        // window.MockID5Forwarder.eventProperties[0].Category.should.equal('Phones');
+        // window.MockID5Forwarder.eventProperties[0].Brand.should.equal('iPhone');
+        // window.MockID5Forwarder.eventProperties[0].Variant.should.equal('6');
+        // window.MockID5Forwarder.eventProperties[0].Price.should.equal(400);
+        // window.MockID5Forwarder.eventProperties[0].TotalAmount.should.equal(400);
+        // window.MockID5Forwarder.eventProperties[0].CouponCode.should.equal('coupon-code');
+        // window.MockID5Forwarder.eventProperties[0].Quantity.should.equal(1);
 
         done();
     });
@@ -271,7 +271,7 @@ describe('XYZ Forwarder', function () {
         //
         // mParticle.forwarder.onUserIdentified(fakeUserStub);
         //
-        // window.MockXYZForwarder.userId.should.equal('123');
+        // window.MockID5Forwarder.userId.should.equal('123');
 
         done();
     });
