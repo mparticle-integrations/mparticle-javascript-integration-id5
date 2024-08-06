@@ -1,5 +1,9 @@
+import SHA256 from 'crypto-js/sha256';
+
 var initialization = {
     name: 'ID5',
+
+    //To-Do: add Module id after establishing in QA
     moduleId: '',
     /*  ****** Fill out initForwarder to load your SDK ******
     Note that not all arguments may apply to your SDK initialization.
@@ -17,22 +21,23 @@ var initialization = {
                Generally, our integrations create script tags and append them to the <head>. Please follow the following format as a guide:
             */
 
-            // var clientScript = document.createElement('script');
-            // clientScript.type = 'text/javascript';
-            // clientScript.async = true;
-            // clientScript.src = 'https://www.clientscript.com/static/clientSDK.js';   // <---- Update this to be your script
-            // (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(clientScript);
-            // clientScript.onload = function() {
-            //     if (clientSDKObject && eventQueue.length > 0) {
-            //         // Process any events that may have been queued up while forwarder was being initialized.
-            //         for (var i = 0; i < eventQueue.length; i++) {
-            //             processEvent(eventQueue[i]);
-            //         }
-            //          // now that each queued event is processed, we empty the eventQueue
-            //         eventQueue = [];
-            //     }
-            //    clientSDKObject.initialize(forwarderSettings.apiKey);
-            // };
+            var clientScript = document.createElement('script');
+            clientScript.type = 'text/javascript';
+            clientScript.async = true;
+            clientScript.src = 'https://cdn.id5-sync.com/api/1.0/id5-api.js';   // <---- Update this to be your script
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(clientScript);
+            clientScript.onload = function() {
+                var partnerData = buildPartnerData(userIdentities);
+
+                //To-Do: PartnerUserId to be added to the init options once received from id5
+                window.ID5.init({partnerId: forwarderSettings.partnerId, pd: partnerData}).onAvailable(function(status) {
+                    var id5Id = status.getID5Id();
+                    var idType = forwarderSettings.id5IdType;
+                    var identities = {};
+                    identities[idType] = id5Id;
+                    window.mParticle.Identity.modify({userIdentities: identities}, identityCallback)
+                });
+            };
         } else {
             // For testing, you should fill out this section in order to ensure any required initialization calls are made,
             // clientSDKObject.initialize(forwarderSettings.apiKey)
@@ -40,4 +45,35 @@ var initialization = {
     }
 };
 
+
+function buildPartnerData(userIdentities) {
+    // To-Do: finalize which PD values we are utilizing
+    var email = userIdentities.userIdentities['email'];
+    var cleansedEmail = normalizeEmail(email);
+    var hashedEmail = SHA256(cleansedEmail);
+
+    var phone = userIdentities.userIdentities['mobile_number'];
+    var cleansedPhone = normalizePhone(phone);
+    var hashedPhoneNumber = SHA256(cleansedPhone);
+
+    var fullUrl;
+    var deviceIPv4;
+    var userAgentString;
+    var idfv;
+
+    var pdKeys = {
+        1: hashedEmail,
+        2: hashedPhoneNumber,
+        8: encodeURIComponent(fullUrl),
+        10: encodeURIComponent(deviceIPv4),
+        12: encodeURIComponent(userAgentString),
+        14: encodeURIComponent(idfv),
+    }
+
+    var pdRaw = Object.keys(pdKeys).map(function(key){
+        return key + '=' + pdKeys[key]
+    }).join('&');
+
+    return btoa(pdRaw);
+}
 module.exports = initialization;
