@@ -70,9 +70,9 @@ describe('ID5 Forwarder', function () {
         },
         reportService = new ReportingService();
 
-    // -------------------DO NOT EDIT ANYTHING ABOVE THIS LINE-----------------------
-    // -------------------START EDITING BELOW:-----------------------
-    // -------------------mParticle stubs - Add any additional stubbing to our methods as needed-----------------------
+// -------------------DO NOT EDIT ANYTHING ABOVE THIS LINE-----------------------
+// -------------------START EDITING BELOW:-----------------------
+// -------------------mParticle stubs - Add any additional stubbing to our methods as needed-----------------------
     mParticle.Identity = {
         getCurrentUser: function() {
             return {
@@ -83,7 +83,7 @@ describe('ID5 Forwarder', function () {
             };
         }
     };
-    // -------------------START EDITING BELOW:-----------------------
+// -------------------START EDITING BELOW:-----------------------
     var MockID5Forwarder = function() {
         var self = this;
 
@@ -143,7 +143,7 @@ describe('ID5 Forwarder', function () {
     });
 
     beforeEach(function() {
-        window.MockID5Forwarder = new MockID5Forwarder();
+        window.MockXYZForwarder = new MockID5Forwarder();
         // Include any specific settings that is required for initializing your SDK here
         var sdkSettings = {
             clientKey: '123456',
@@ -167,6 +167,22 @@ describe('ID5 Forwarder', function () {
 
         // The third argument here is a boolean to indicate that the integration is in test mode to avoid loading any third party scripts. Do not change this value.
         mParticle.forwarder.init(sdkSettings, reportService.cb, true, null, userAttributes, userIdentities);
+    });
+
+    it ('should initialize ID5 with a PartnerID', function(done) {
+        done();
+    });
+
+    it ('should not initialize ID5 without a PartnerID', function(done){
+        done();
+    });
+
+    it ('should build PD based on user identities and device IDs', function(done) {
+        done();
+    });
+
+    it ('should only utilize known identities and device IDs to build PDs', function(done) {
+        done();
     });
 
     it('should log event', function(done) {
