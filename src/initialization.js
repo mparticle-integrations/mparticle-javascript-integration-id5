@@ -1,4 +1,4 @@
-import SHA256 from 'crypto-js/sha256';
+// import SHA256 from 'crypto-js/sha256';
 
 var initialization = {
     name: 'ID5',
@@ -35,6 +35,7 @@ var initialization = {
                     var idType = forwarderSettings.id5IdType;
                     var identities = {};
                     identities[idType] = id5Id;
+
                     window.mParticle.Identity.modify({userIdentities: identities}, identityCallback)
                 });
             };
@@ -47,6 +48,7 @@ var initialization = {
 
 
 function buildPartnerData(userIdentities) {
+    var SHA256 = require('crypto-js/sha256');
     // To-Do: finalize which PD values we are utilizing
     var email = userIdentities.userIdentities['email'];
     var cleansedEmail = normalizeEmail(email);
@@ -56,7 +58,7 @@ function buildPartnerData(userIdentities) {
     var cleansedPhone = normalizePhone(phone);
     var hashedPhoneNumber = SHA256(cleansedPhone);
 
-    var fullUrl;
+    var fullUrl = window.location.href;
     var deviceIPv4;
     var userAgentString;
     var idfv;
@@ -75,5 +77,28 @@ function buildPartnerData(userIdentities) {
     }).join('&');
 
     return btoa(pdRaw);
+}
+
+function normalizeEmail(email) {
+    var parts = email.split("@")
+    var charactersToRemove = ['+', '.']
+
+    if (parts[1] != 'gmail.com') {
+        return email;
+    }
+
+    charactersToRemove.forEach(function(character) {
+        parts[0] = parts[0].replaceAll(character, '').toLowerCase();
+    })
+
+    return parts.join('@');
+}
+
+function normalizePhone(phone) {
+    var charactersToRemove = [' ', '-', '(', ')']
+    charactersToRemove.forEach(function(character) {
+        phone = phone.replaceAll(character, '');
+    })
+    return phone;
 }
 module.exports = initialization;
