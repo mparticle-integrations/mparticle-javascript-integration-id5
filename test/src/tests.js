@@ -185,6 +185,20 @@ describe('ID5 Forwarder', function () {
         done();
     });
 
+    it ('should normalize emails ending in "@gmail"', function(done){
+        done();
+    });
+
+    it ('should not normalize emails not ending in @gmail', function(done){
+        done();
+    });
+
+    it ('should normalize phone numbers to ')
+    it ('should assign the ID5 ID to the selected identity in the forwarder settings', function(done){
+        done();
+    });
+
+
     it('should log event', function(done) {
         // mParticle.forwarder.process({
         //     EventDataType: MessageType.PageEvent,
