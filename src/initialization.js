@@ -49,6 +49,7 @@ var initialization = {
 
 function buildPartnerData(userIdentities) {
     var SHA256 = require('crypto-js/sha256');
+
     // To-Do: finalize which PD values we are utilizing
     var email = userIdentities.userIdentities['email'];
     var cleansedEmail = normalizeEmail(email);
