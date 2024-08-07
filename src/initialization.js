@@ -101,4 +101,5 @@ function normalizePhone(phone) {
     })
     return phone;
 }
+
 module.exports = initialization;
