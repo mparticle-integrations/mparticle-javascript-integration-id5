@@ -205,7 +205,7 @@ describe('ID5 Forwarder', function () {
         done();
     });
 
-    it ('should not assign the ID5 ID if a selected identity is missing in teh forwarder settings', function(done) {
+    it ('should not assign the ID5 ID if a selected identity is missing in the forwarder settings', function(done) {
         done();
     });
 
