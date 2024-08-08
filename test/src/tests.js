@@ -173,7 +173,7 @@ describe('ID5 Forwarder', function () {
         done();
     });
 
-    it ('should not initialize ID5 without a PartnerID', function(done){
+    it ('should not initialize ID5 without a PartnerID', function(done) {
         done();
     });
 
@@ -185,19 +185,29 @@ describe('ID5 Forwarder', function () {
         done();
     });
 
-    it ('should normalize emails ending in "@gmail"', function(done){
+    it ('should normalize emails ending in "@gmail"', function(done) {
         done();
     });
 
-    it ('should not normalize emails not ending in @gmail', function(done){
+    it ('should not normalize emails not ending in @gmail', function(done) {
         done();
     });
 
-    it ('should normalize phone numbers to ')
+    it ('should normalize phone numbers by removing certain special characters', function(done) {
+        done();
+    });
+
+    it ('should not remove special characters beyond the specified list', function(done){
+        done()
+    });
+
     it ('should assign the ID5 ID to the selected identity in the forwarder settings', function(done){
         done();
     });
 
+    it ('should not assign the ID5 ID if a selected identity is missing in teh forwarder settings', function(done) {
+        done();
+    });
 
     it('should log event', function(done) {
         // mParticle.forwarder.process({
