@@ -2,9 +2,8 @@
 
 var initialization = {
     name: 'ID5',
+    moduleId: '248',
 
-    //To-Do: add Module id after establishing in QA
-    moduleId: '',
     /*  ****** Fill out initForwarder to load your SDK ******
     Note that not all arguments may apply to your SDK initialization.
     These are passed from mParticle, but leave them even if they are not being used.
@@ -48,30 +47,31 @@ var initialization = {
 
 
 function buildPartnerData(userIdentities) {
-    var SHA256 = require('crypto-js/sha256');
+    var pdKeys = {};
 
-    // To-Do: finalize which PD values we are utilizing
     var email = userIdentities.userIdentities['email'];
-    var cleansedEmail = normalizeEmail(email);
-    var hashedEmail = SHA256(cleansedEmail);
+    var processedEmail = normalizeAndHashEmail(email);
+    if (processedEmail) pdKeys[1] = processedEmail;
 
     var phone = userIdentities.userIdentities['mobile_number'];
-    var cleansedPhone = normalizePhone(phone);
-    var hashedPhoneNumber = SHA256(cleansedPhone);
+    var processedPhone = normalizeAndHashPhone(phone);
+    if (processedPhone) pdKeys[2] = processedPhone;
 
     var fullUrl = window.location.href;
-    var deviceIPv4;
-    var userAgentString;
-    var idfv;
+    if (fullUrl) pdKeys[8] = encodeURIComponent(fullUrl);
 
-    var pdKeys = {
-        1: hashedEmail,
-        2: hashedPhoneNumber,
-        8: encodeURIComponent(fullUrl),
-        10: encodeURIComponent(deviceIPv4),
-        12: encodeURIComponent(userAgentString),
-        14: encodeURIComponent(idfv),
-    }
+    var domain = window.location.host;
+    if (domain) pdKeys[9] = domain;
+
+    // Below may not be accessible from kit
+    var deviceIPv4;
+    if (deviceIPv4) pdKeys[10] = encodeURIComponent(deviceIPv4);
+
+    var userAgentString;
+    if (userAgentString) pdKeys[12] = encodeURIComponent(userAgentString);
+
+    var idfv;
+    if (idfv) pdKeys[14] = encodeURIComponent(idfv);
 
     var pdRaw = Object.keys(pdKeys).map(function(key){
         return key + '=' + pdKeys[key]
@@ -80,7 +80,9 @@ function buildPartnerData(userIdentities) {
     return btoa(pdRaw);
 }
 
-function normalizeEmail(email) {
+function normalizeAndHashEmail(email) {
+    var SHA256 = require('crypto-js/sha256');
+
     var parts = email.split("@")
     var charactersToRemove = ['+', '.']
 
@@ -92,15 +94,17 @@ function normalizeEmail(email) {
         parts[0] = parts[0].replaceAll(character, '').toLowerCase();
     })
 
-    return parts.join('@');
+    return SHA256(parts.join('@'));
 }
 
-function normalizePhone(phone) {
+function normalizeAndHashPhone(phone) {
+    var SHA256 = require('crypto-js/sha256');
+
     var charactersToRemove = [' ', '-', '(', ')']
     charactersToRemove.forEach(function(character) {
         phone = phone.replaceAll(character, '');
     })
-    return phone;
+    return SHA256(phone);
 }
 
 module.exports = initialization;
