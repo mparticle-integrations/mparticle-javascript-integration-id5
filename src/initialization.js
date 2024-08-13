@@ -64,14 +64,8 @@ function buildPartnerData(userIdentities) {
     if (domain) pdKeys[9] = domain;
 
     // Below may not be accessible from kit
-    var deviceIPv4;
-    if (deviceIPv4) pdKeys[10] = encodeURIComponent(deviceIPv4);
-
     var userAgentString;
     if (userAgentString) pdKeys[12] = encodeURIComponent(userAgentString);
-
-    var idfv;
-    if (idfv) pdKeys[14] = encodeURIComponent(idfv);
 
     var pdRaw = Object.keys(pdKeys).map(function(key){
         return key + '=' + pdKeys[key]
