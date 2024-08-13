@@ -1,7 +1,7 @@
 ID5 Integration
 ===========================
 
-ID5 SDK integration for mParticle.
+ID5 SDK integration skeleton for mParticle.
 
 # License
 
