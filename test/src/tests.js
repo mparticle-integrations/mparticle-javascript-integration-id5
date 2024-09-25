@@ -10,7 +10,10 @@ describe('ID5 Forwarder', function () {
             OptOut: 6,
             AppStateTransition: 10,
             Profile: 14,
-            Commerce: 16
+            Commerce: 16,
+            Media: 20,
+            UserAttributeChange: 17,
+            UserIdentityChange: 18,
         },
         EventType = {
             Unknown: 0,
@@ -49,8 +52,19 @@ describe('ID5 Forwarder', function () {
             Microsoft: 5,
             Yahoo: 6,
             Email: 7,
-            Alias: 8,
             FacebookCustomAudienceId: 9,
+            Other2: 10,
+            Other3: 11,
+            Other4: 12,
+            Other5: 13,
+            Other6: 14,
+            Other7: 15,
+            Other8: 16,
+            Other9: 17,
+            Other10: 18,
+            MobileNumber: 19,
+            PhoneNumber2: 20,
+            PhoneNumber3: 21,
         },
         ReportingService = function () {
             var self = this;
@@ -83,59 +97,32 @@ describe('ID5 Forwarder', function () {
             };
         }
     };
-// -------------------START EDITING BELOW:-----------------------
+    // -------------------START EDITING BELOW:-----------------------
     var MockID5Forwarder = function() {
         var self = this;
 
         // create properties for each type of event you want tracked, see below for examples
         this.trackCustomEventCalled = false;
         this.logPurchaseEventCalled = false;
-        this.initializeCalled = false;
+        this.isInitialized = false;
+        this.initCalled = false;
+        this.getUserIdCalled = false;
 
-        this.trackCustomName = null;
-        this.logPurchaseName = null;
-        this.apiKey = null;
-        this.appId = null;
-        this.userId = null;
-        this.userAttributes = {};
-        this.userIdField = null;
-
-        this.eventProperties = [];
-        this.purchaseEventProperties = [];
+        this.pd = null;
+        this.partnerId = null;
+        this.configurationOptions = null;
 
         // stub your different methods to ensure they are being called properly
-        this.initialize = function(appId, apiKey) {
-            self.initializeCalled = true;
-            self.apiKey = apiKey;
-            self.appId = appId;
+        this.init = function(id5Options) {
+            self.initCalled = true;
+            self.partnerId = id5Options.partnerId;
+            self.pd = id5Options.pd
         };
 
-        this.stubbedTrackingMethod = function(name, eventProperties){
-            self.trackCustomEventCalled = true;
-            self.trackCustomName = name;
-            self.eventProperties.push(eventProperties);
-            // Return true to indicate event should be reported
-            return true;
-        };
-
-        this.stubbedUserAttributeSettingMethod = function(userAttributes) {
-            self.userId = id;
-            userAttributes = userAttributes || {};
-            if (Object.keys(userAttributes).length) {
-                for (var key in userAttributes) {
-                    if (userAttributes[key] === null) {
-                        delete self.userAttributes[key];
-                    }
-                    else {
-                        self.userAttributes[key] = userAttributes[key];
-                    }
-                }
-            }
-        };
-
-        this.stubbedUserLoginMethod = function(id) {
-            self.userId = id;
-        };
+        this.getUserId = function() {
+            self.getUserIdCalled = true;
+            return 'ID5*testtesttesttest'
+        }
     };
 
     before(function () {
@@ -143,17 +130,16 @@ describe('ID5 Forwarder', function () {
     });
 
     beforeEach(function() {
-        window.MockXYZForwarder = new MockID5Forwarder();
+        window.ID5 = new MockID5Forwarder();
         // Include any specific settings that is required for initializing your SDK here
         var sdkSettings = {
-            clientKey: '123456',
-            appId: 'abcde',
-            userIdField: 'customerId'
+            partnerId: '1234',
         };
         // You may require userAttributes or userIdentities to be passed into initialization
         var userAttributes = {
             color: 'green'
         };
+
         var userIdentities = [{
             Identity: 'customerId',
             Type: IdentityType.CustomerId
@@ -161,19 +147,28 @@ describe('ID5 Forwarder', function () {
             Identity: 'email',
             Type: IdentityType.Email
         }, {
-            Identity: 'facebook',
-            Type: IdentityType.Facebook
+            Identity: 'mobile_number',
+            Type: IdentityType.MobileNumber
         }];
+
 
         // The third argument here is a boolean to indicate that the integration is in test mode to avoid loading any third party scripts. Do not change this value.
         mParticle.forwarder.init(sdkSettings, reportService.cb, true, null, userAttributes, userIdentities);
     });
 
-    it ('should initialize ID5 with a PartnerID', function(done) {
+
+    it ('Initialization should load the script into the document', function(done) {
+        mParticle.forwarder.init({
+            partnerId: '1234',
+        });
+        document.scripts[0].src.should.equal('https://cdn.id5-sync.com/api/1.0/id5-api.js');
         done();
     });
 
-    it ('should not initialize ID5 without a PartnerID', function(done) {
+    it ('should call ID5.init', function(done) {
+        mParticle.forwarder.init({
+            partnerId: '1234',
+        });
         done();
     });
 
