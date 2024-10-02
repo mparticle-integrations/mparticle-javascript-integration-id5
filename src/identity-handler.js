@@ -25,30 +25,19 @@ IdentityHandler.prototype.onUserIdentified = function(mParticleUser) {};
 IdentityHandler.prototype.onIdentifyComplete = function(
     mParticleUser,
     identityApiRequest
-) {
-};
+) {};
 IdentityHandler.prototype.onLoginComplete = function(
     mParticleUser,
     identityApiRequest
-) {
-    var logId5Id = this.common.logId5Id;
-    var partnerData = this.common.buildPartnerData(mParticleUser);
-    var newId5Instance = window.ID5.init({partnerId: this.common.partnerId, pd: partnerData})
-
-    newId5Instance.onAvailable(function(status){
-        logId5Id(status.getUserId());
-    }.bind(logId5Id));
-};
+) {};
 IdentityHandler.prototype.onLogoutComplete = function(
     mParticleUser,
     identityApiRequest
-) {
-};
+) {};
 IdentityHandler.prototype.onModifyComplete = function(
     mParticleUser,
     identityApiRequest
-) {
-};
+) {};
 
 /*  In previous versions of the mParticle web SDK, setting user identities on
     kits is only reachable via the onSetUserIdentity method below. We recommend
