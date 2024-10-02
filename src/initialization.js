@@ -20,14 +20,18 @@ var initialization = {
             var id5Script = document.createElement('script');
             id5Script.src = 'https://cdn.id5-sync.com/api/1.0/id5-api.js';   // <---- Update this to be your script
             (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(id5Script);
-            debugger;
+
             common.id5Id = null;
             common.id5IdSent = false;
-            common.parterId = forwarderSettings.partnerId;
+            common.partnerId = forwarderSettings.partnerId;
 
             id5Script.onload = function() {
                 isInitialized = true;
-                common.id5Instance = window.ID5.init({partnerId: forwarderSettings.partnerId})
+                var id5Instance = window.ID5.init({partnerId: common.partnerId})
+
+                id5Instance.onAvailable(function(status){
+                    common.logId5Id(status.getUserId());
+                }.bind(common));
             };
         } else {
             // For testing, you should fill out this section in order to ensure any required initialization calls are made,

@@ -87,12 +87,20 @@ describe('ID5 Forwarder', function () {
 // -------------------DO NOT EDIT ANYTHING ABOVE THIS LINE-----------------------
 // -------------------START EDITING BELOW:-----------------------
 // -------------------mParticle stubs - Add any additional stubbing to our methods as needed-----------------------
+    var userAttributes = {};
+
     mParticle.Identity = {
         getCurrentUser: function() {
             return {
                 getMPID: function() {
                     return '123';
-                }
+                },
+                setUserAttribute: function(key, value){
+                    userAttributes[key]= value
+                },
+                getAllUserAttributes: function() {
+                    return userAttributes;
+                },
 
             };
         }
@@ -117,6 +125,11 @@ describe('ID5 Forwarder', function () {
             self.initCalled = true;
             self.partnerId = id5Options.partnerId;
             self.pd = id5Options.pd
+            return this;
+        };
+
+        this.onAvailable = function(callback) {
+            return callback
         };
 
         this.getUserId = function() {
@@ -133,7 +146,7 @@ describe('ID5 Forwarder', function () {
         window.ID5 = new MockID5Forwarder();
         // Include any specific settings that is required for initializing your SDK here
         var sdkSettings = {
-            partnerId: '1234',
+            partnerId: 1234,
         };
         // You may require userAttributes or userIdentities to be passed into initialization
         var userAttributes = {
@@ -157,157 +170,67 @@ describe('ID5 Forwarder', function () {
     });
 
 
-    it ('Initialization should load the script into the document', function(done) {
+    it ('should load the script into the document during initialization', function(done) {
+        window.ID5 = new MockID5Forwarder();
         mParticle.forwarder.init({
-            partnerId: '1234',
+            partnerId: 1234,
         });
         document.scripts[0].src.should.equal('https://cdn.id5-sync.com/api/1.0/id5-api.js');
         done();
     });
 
-    it ('should call ID5.init', function(done) {
-        mParticle.forwarder.init({
-            partnerId: '1234',
+    describe('Common Functions', function() {
+        it ('should log a user attribute when logId5 is called', function(done) {
+            mParticle.forwarder.common.logId5Id("testId");
+
+            var attributes = mParticle.Identity.getCurrentUser().getAllUserAttributes()
+
+            attributes.ID5ID.should.exist;
+            attributes.ID5ID.should.equal("testId")
+            done();
         });
-        done();
-    });
 
-    it ('should build PD based on user identities and device IDs', function(done) {
-        done();
-    });
+        it ('should build pd when buildPartnerData is called with a user', function(done) {
+            var user = {
+                getUserIdentities: function() {
+                    return {
+                        userIdentities: {
+                            email: 'test@email.com',
+                            phone: '123-456-7890',
+                        }
+                    }
+                },
+            };
 
-    it ('should only utilize known identities and device IDs to build PDs', function(done) {
-        done();
-    });
+            var pd = mParticle.forwarder.common.buildPartnerData(user)
 
-    it ('should normalize emails ending in "@gmail"', function(done) {
-        done();
-    });
+            pd.should.exist;
+            pd.should.equal('MT03MzA2MmQ4NzI5MjZjMmE1NTZmMTdiMzZmNTBlMzI4ZGRmOWJmZjlkNDAzOTM5YmQxNGI2YzNiN2Y1YTMzZmMy')
+            done();
+        });
 
-    it ('should not normalize emails not ending in @gmail', function(done) {
-        done();
-    });
+        it ('should normalize an gmail when normalizeEmail is called', function(done) {
+            var normalizedGmail = mParticle.forwarder.common.normalizeEmail('test+test.2@gmail.com');
 
-    it ('should normalize phone numbers by removing certain special characters', function(done) {
-        done();
-    });
+            normalizedGmail.should.exist;
+            normalizedGmail.should.equal('testtest2@gmail.com')
+            done();
+        });
 
-    it ('should not remove special characters beyond the specified list', function(done){
-        done()
-    });
+        it ('should not normalize an non-gmail when normalizeEmail is called', function(done) {
+            var normalizedOther = mParticle.forwarder.common.normalizeEmail('test+test.2@test.com');
 
-    it ('should assign the ID5 ID to the selected identity in the forwarder settings', function(done){
-        done();
-    });
+            normalizedOther.should.exist;
+            normalizedOther.should.equal('test+test.2@test.com');
+            done();
+        });
 
-    it ('should not assign the ID5 ID if a selected identity is missing in the forwarder settings', function(done) {
-        done();
-    });
+        it ('should normalize phone numbers when normalizePhone is called', function(done) {
+            var normalizedPhone = mParticle.forwarder.common.normalizePhone('(123) 456-7890');
 
-    it('should log event', function(done) {
-        // mParticle.forwarder.process({
-        //     EventDataType: MessageType.PageEvent,
-        //     EventName: 'Test Event',
-        //     EventAttributes: {
-        //         label: 'label',
-        //         value: 200,
-        //         category: 'category'
-        //     }
-        // });
-
-        // window.MockID5Forwarder.eventProperties[0].label.should.equal('label');
-        // window.MockID5Forwarder.eventProperties[0].value.should.equal(200);
-
-        done();
-    });
-
-    it('should log page view', function(done) {
-        // mParticle.forwarder.process({
-        //     EventDataType: MessageType.PageView,
-        //     EventName: 'test name',
-        //     EventAttributes: {
-        //         attr1: 'test1',
-        //         attr2: 'test2'
-        //     }
-        // });
-        //
-        // window.MockID5Forwarder.trackCustomEventCalled.should.equal(true);
-        // window.MockID5Forwarder.trackCustomName.should.equal('test name');
-        // window.MockID5Forwarder.eventProperties[0].attr1.should.equal('test1');
-        // window.MockID5Forwarder.eventProperties[0].attr2.should.equal('test2');
-
-        done();
-    });
-
-    it('should log a product purchase commerce event', function(done) {
-        // mParticle.forwarder.process({
-        //     EventName: 'Test Purchase Event',
-        //     EventDataType: MessageType.Commerce,
-        //     EventCategory: EventType.ProductPurchase,
-        //     ProductAction: {
-        //         ProductActionType: ProductActionType.Purchase,
-        //         ProductList: [
-        //             {
-        //                 Sku: '12345',
-        //                 Name: 'iPhone 6',
-        //                 Category: 'Phones',
-        //                 Brand: 'iPhone',
-        //                 Variant: '6',
-        //                 Price: 400,
-        //                 TotalAmount: 400,
-        //                 CouponCode: 'coupon-code',
-        //                 Quantity: 1
-        //             }
-        //         ],
-        //         TransactionId: 123,
-        //         Affiliation: 'my-affiliation',
-        //         TotalAmount: 450,
-        //         TaxAmount: 40,
-        //         ShippingAmount: 10,
-        //         CouponCode: null
-        //     }
-        // });
-        //
-        // window.MockID5Forwarder.trackCustomEventCalled.should.equal(true);
-        // window.MockID5Forwarder.trackCustomName.should.equal('Purchase');
-        //
-        // window.MockID5Forwarder.eventProperties[0].Sku.should.equal('12345');
-        // window.MockID5Forwarder.eventProperties[0].Name.should.equal('iPhone 6');
-        // window.MockID5Forwarder.eventProperties[0].Category.should.equal('Phones');
-        // window.MockID5Forwarder.eventProperties[0].Brand.should.equal('iPhone');
-        // window.MockID5Forwarder.eventProperties[0].Variant.should.equal('6');
-        // window.MockID5Forwarder.eventProperties[0].Price.should.equal(400);
-        // window.MockID5Forwarder.eventProperties[0].TotalAmount.should.equal(400);
-        // window.MockID5Forwarder.eventProperties[0].CouponCode.should.equal('coupon-code');
-        // window.MockID5Forwarder.eventProperties[0].Quantity.should.equal(1);
-
-        done();
-    });
-
-    it('should set customer id user identity on user identity change', function(done) {
-        // var fakeUserStub = {
-        //     getUserIdentities: function() {
-        //         return {
-        //             userIdentities: {
-        //                 customerid: '123'
-        //             }
-        //         };
-        //     },
-        //     getMPID: function() {
-        //         return 'testMPID';
-        //     },
-        //     setUserAttribute: function() {
-        //
-        //     },
-        //     removeUserAttribute: function() {
-        //
-        //     }
-        // };
-        //
-        // mParticle.forwarder.onUserIdentified(fakeUserStub);
-        //
-        // window.MockID5Forwarder.userId.should.equal('123');
-
-        done();
-    });
+            normalizedPhone.should.exist;
+            normalizedPhone.should.equal('1234567890');
+            done();
+        })
+    })
 });

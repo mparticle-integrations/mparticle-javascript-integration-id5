@@ -5,17 +5,16 @@ Common.prototype.exampleMethod = function () {
     return 'I am an example';
 }
 
-Common.prototype.logId5 = function () {
-    var id5Id = this.id5Instance.getUserId();
-    debugger;
-
+Common.prototype.logId5Id = function (id5Id) {
     //Checks and saves ID5 ID if it is new
     if (id5Id != this.id5Id) {
         this.id5Id = id5Id;
         this.id5IdSent = false
     }
 
-    //Only sends the ID5 ID Custom Event if unsent
+    //Sets user attribute if ID is unsent.
+    //This function will be updated once the decryption architecture is finalized.
+    //The ID may need to be sent as custom event.
     if (this.id5IdSent == false){
         var currentUser = mParticle.Identity.getCurrentUser();
         currentUser.setUserAttribute('ID5ID', id5Id);
@@ -29,27 +28,15 @@ Common.prototype.buildPartnerData = function (mParticleUser) {
 
     var email = userIdentities.userIdentities['email'];
     if (email) {
-        var processedEmail = normalizeAndHashEmail(email);
+        var processedEmail = SHA256(this.normalizeEmail(email));
         pdKeys[1] = processedEmail;
     }
 
     var phone = userIdentities.userIdentities['mobile_number'];
     if (phone) {
-        var processedPhone = normalizeAndHashPhone(phone);
+        var processedPhone = SHA256(this.normalizePhone(phone));
         pdKeys[2] = processedPhone;
     }
-
-    //Candidates to be removed
-    var fullUrl = window.location.href;
-    if (fullUrl) pdKeys[8] = encodeURIComponent(fullUrl);
-
-    var domain = window.location.host;
-    if (domain) pdKeys[9] = domain;
-
-    var userAgentString = navigator.userAgent;
-    if (userAgentString) pdKeys[12] = encodeURIComponent(userAgentString);
-    // above may be pulled from PD as they are un needed for the ID5 ID generation as a basic level
-
 
     var pdRaw = Object.keys(pdKeys).map(function(key){
         return key + '=' + pdKeys[key]
@@ -58,7 +45,8 @@ Common.prototype.buildPartnerData = function (mParticleUser) {
     return btoa(pdRaw);
 }
 
-function normalizeAndHashEmail(email) {
+Common.prototype.normalizeEmail = function(email) {
+    debugger;
     var parts = email.split("@")
     var charactersToRemove = ['+', '.']
 
@@ -70,15 +58,17 @@ function normalizeAndHashEmail(email) {
         parts[0] = parts[0].replaceAll(character, '').toLowerCase();
     })
 
-    return SHA256(parts.join('@'));
+    return parts.join('@');
 }
 
-function normalizeAndHashPhone(phone) {
+Common.prototype.normalizePhone = function(phone) {
     var charactersToRemove = [' ', '-', '(', ')']
+
     charactersToRemove.forEach(function(character) {
         phone = phone.replaceAll(character, '');
     })
-    return SHA256(phone);
+
+    return phone;
 }
 
 module.exports = Common;

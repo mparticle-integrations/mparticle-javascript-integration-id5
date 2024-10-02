@@ -26,26 +26,28 @@ IdentityHandler.prototype.onIdentifyComplete = function(
     mParticleUser,
     identityApiRequest
 ) {
-    var partnerData = this.common.buildPartnerData(mParticleUser);
-    this.common.id5Instance = window.ID5.init({partnerId: this.common.partnerId, pd: partnerData})
 };
 IdentityHandler.prototype.onLoginComplete = function(
     mParticleUser,
     identityApiRequest
-) {};
+) {
+    var logId5Id = this.common.logId5Id;
+    var partnerData = this.common.buildPartnerData(mParticleUser);
+    var newId5Instance = window.ID5.init({partnerId: this.common.partnerId, pd: partnerData})
+
+    newId5Instance.onAvailable(function(status){
+        logId5Id(status.getUserId());
+    }.bind(logId5Id));
+};
 IdentityHandler.prototype.onLogoutComplete = function(
     mParticleUser,
     identityApiRequest
 ) {
-    var partnerData = this.common.buildPartnerData(mParticleUser);
-    this.common.id5Instance = window.ID5.init({partnerId: this.common.partnerId, pd: partnerData})
 };
 IdentityHandler.prototype.onModifyComplete = function(
     mParticleUser,
     identityApiRequest
 ) {
-    var partnerData = this.common.buildPartnerData(mParticleUser);
-    this.common.id5Instance = window.ID5.init({partnerId: this.common.partnerId, pd: partnerData})
 };
 
 /*  In previous versions of the mParticle web SDK, setting user identities on
