@@ -6,6 +6,7 @@ Common.prototype.exampleMethod = function () {
 }
 
 Common.prototype.logId5Id = function (id5Id) {
+    debugger;
     //Checks and saves ID5 ID if it is new
     if (id5Id != this.id5Id) {
         this.id5Id = id5Id;
@@ -20,7 +21,7 @@ Common.prototype.logId5Id = function (id5Id) {
         currentUser.setUserAttribute('ID5ID', id5Id);
         this.id5IdSent = true;
     }
-};
+}.bind(this);
 
 Common.prototype.buildPartnerData = function (mParticleUser) {
     var pdKeys = {};
@@ -46,7 +47,6 @@ Common.prototype.buildPartnerData = function (mParticleUser) {
 }
 
 Common.prototype.normalizeEmail = function(email) {
-    debugger;
     var parts = email.split("@")
     var charactersToRemove = ['+', '.']
 

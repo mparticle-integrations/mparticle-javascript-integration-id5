@@ -27,13 +27,27 @@ IdentityHandler.prototype.onIdentifyComplete = function(
     identityApiRequest
 ) {};
 IdentityHandler.prototype.onLoginComplete = function(
-    mParticleUser,
-    identityApiRequest
-) {};
+    mParticleUser
+) {
+    var partnerData = this.common.buildPartnerData(mParticleUser);
+    var id5Instance = window.ID5.init({partnerId: this.common.partnerId, pd: partnerData})
+    var logId5Id = this.common.logId5Id;
+
+    id5Instance.onAvailable(function(status){
+        logId5Id(status.getUserId());
+    }.bind(logId5Id));
+};
 IdentityHandler.prototype.onLogoutComplete = function(
     mParticleUser,
     identityApiRequest
-) {};
+) {
+    var id5Instance = window.ID5.init({partnerId: this.common.partnerId})
+    var logId5Id = this.common.logId5Id;
+
+    id5Instance.onAvailable(function(status){
+        logId5Id(status.getUserId());
+    }.bind(logId5Id));
+};
 IdentityHandler.prototype.onModifyComplete = function(
     mParticleUser,
     identityApiRequest

@@ -27,6 +27,7 @@ var initialization = {
 
             id5Script.onload = function() {
                 isInitialized = true;
+
                 var id5Instance = window.ID5.init({partnerId: common.partnerId})
 
                 id5Instance.onAvailable(function(status){
@@ -34,8 +35,13 @@ var initialization = {
                 }.bind(common));
             };
         } else {
-            // For testing, you should fill out this section in order to ensure any required initialization calls are made,
-            // clientSDKObject.initialize(forwarderSettings.apiKey)
+            isInitialized = true;
+
+            var id5Instance = window.ID5.init({partnerId: common.partnerId})
+
+            id5Instance.onAvailable(function(status){
+                common.logId5Id(status.getUserId());
+            }.bind(common));
         }
     }
 };
