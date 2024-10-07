@@ -132,7 +132,7 @@ describe('ID5 Forwarder', function () {
                     };
                 },
             };
-            mParticle.forwarder.onLoginComplete(user);
+            mParticle.forwarder.onLogoutComplete(user);
 
             window.ID5.numberOfInitsCalled.should.equal(2);
             done();
