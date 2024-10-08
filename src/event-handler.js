@@ -17,7 +17,6 @@ function EventHandler(common) {
     this.common = common || {};
 }
 EventHandler.prototype.logEvent = function() {};
-
 EventHandler.prototype.logError = function() {
     // The schema for a logError event is the same, but noteworthy differences are as follows:
     // {

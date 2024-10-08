@@ -51,9 +51,7 @@ Common.prototype.normalizeEmail = function(email) {
         return email;
     }
 
-    charactersToRemove.forEach(function(character) {
-        parts[0] = parts[0].replaceAll(character, '').toLowerCase();
-    })
+    parts[0]= replace(parts[0], charactersToRemove);
 
     return parts.join('@');
 }
@@ -61,11 +59,18 @@ Common.prototype.normalizeEmail = function(email) {
 Common.prototype.normalizePhone = function(phone) {
     var charactersToRemove = [' ', '-', '(', ')']
 
-    charactersToRemove.forEach(function(character) {
-        phone = phone.replaceAll(character, '');
-    })
-
-    return phone;
+    return replace(phone, charactersToRemove);
 }
 
+function replace(string, targets) {
+    debugger;
+    var newString = '';
+    for(var i = 0; i < string.length; i++){
+        var char = string[i];
+        if (!targets.includes(char)){
+            newString += char
+        }
+    }
+    return newString.toLowerCase();
+}
 module.exports = Common;
