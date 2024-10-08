@@ -6,9 +6,8 @@ Common.prototype.exampleMethod = function () {
 }
 
 Common.prototype.logId5Id = function (id5Id) {
-    debugger;
     //Checks and saves ID5 ID if it is new
-    if (id5Id != this.id5Id) {
+    if (id5Id !== this.id5Id) {
         this.id5Id = id5Id;
         this.id5IdSent = false
     }
@@ -16,12 +15,12 @@ Common.prototype.logId5Id = function (id5Id) {
     //Sets user attribute if ID is unsent.
     //This function will be updated once the decryption architecture is finalized.
     //The ID may need to be sent as custom event.
-    if (this.id5IdSent == false){
+    if (this.id5IdSent === false){
         var currentUser = mParticle.Identity.getCurrentUser();
         currentUser.setUserAttribute('ID5ID', id5Id);
         this.id5IdSent = true;
     }
-}.bind(this);
+};
 
 Common.prototype.buildPartnerData = function (mParticleUser) {
     var pdKeys = {};
@@ -29,14 +28,12 @@ Common.prototype.buildPartnerData = function (mParticleUser) {
 
     var email = userIdentities.userIdentities['email'];
     if (email) {
-        var processedEmail = SHA256(this.normalizeEmail(email));
-        pdKeys[1] = processedEmail;
+        pdKeys[1] = SHA256(this.normalizeEmail(email));
     }
 
     var phone = userIdentities.userIdentities['mobile_number'];
     if (phone) {
-        var processedPhone = SHA256(this.normalizePhone(phone));
-        pdKeys[2] = processedPhone;
+        pdKeys[2]= SHA256(this.normalizePhone(phone));
     }
 
     var pdRaw = Object.keys(pdKeys).map(function(key){
