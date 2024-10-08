@@ -20,8 +20,8 @@ describe('ID5 Forwarder', function () {
         reportService = new ReportingService();
 
     // -------------------DO NOT EDIT ANYTHING ABOVE THIS LINE-----------------------
-// -------------------START EDITING BELOW:-----------------------
-// -------------------mParticle stubs - Add any additional stubbing to our methods as needed-----------------------
+    // -------------------START EDITING BELOW:-----------------------
+    // -------------------mParticle stubs - Add any additional stubbing to our methods as needed-----------------------
     var userAttributes = {};
 
     mParticle.Identity = {
