@@ -24,7 +24,7 @@ function IdentityHandler(common) {
 IdentityHandler.prototype.onUserIdentified = function() {};
 IdentityHandler.prototype.onIdentifyComplete = function() {};
 
-//Must re-initialize ID5 with partner identities(pd) in the config file on login
+//Must re-initialize ID5 with partner identities(pd) in the config to collect an updated ID5 ID
 IdentityHandler.prototype.onLoginComplete = function(
     mParticleUser
 ) {
@@ -40,7 +40,7 @@ IdentityHandler.prototype.onLoginComplete = function(
     }
 };
 
-//Must re-initialize ID5 without partner identities (pd) in the config on logout complete
+//Must re-initialize ID5 without partner identities (pd) in the config to revert to an anonymous ID5 ID
 IdentityHandler.prototype.onLogoutComplete = function(
 ) {
     var id5Instance = window.ID5.init({partnerId: this.common.partnerId})
