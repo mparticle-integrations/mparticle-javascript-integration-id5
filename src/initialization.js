@@ -16,9 +16,9 @@ var initialization = {
             /* Load your Web SDK here using a variant of your snippet from your readme that your customers would generally put into their <head> tags
                Generally, our integrations create script tags and append them to the <head>. Please follow the following format as a guide:
             */
-
+            //ID5 docs on initialization can be found here: https://github.com/id5io/id5-api.js/blob/master/README.md
             var id5Script = document.createElement('script');
-            id5Script.src = 'https://cdn.id5-sync.com/api/1.0/id5-api.js';   // <---- Update this to be your script
+            id5Script.src = 'https://cdn.id5-sync.com/api/1.0/id5-api.js';
             (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(id5Script);
 
             common.id5Id = null;

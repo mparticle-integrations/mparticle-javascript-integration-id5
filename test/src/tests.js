@@ -122,6 +122,22 @@ describe('ID5 Forwarder', function () {
             done();
         });
 
+        it('should call ID5.init only once on userLoginComplete with a user without email or phone', function(done){
+            var user = {
+                getUserIdentities: function () {
+                    return {
+                        userIdentities: {
+                            customerId: 'testId1234',
+                        },
+                    };
+                },
+            };
+            mParticle.forwarder.onLoginComplete(user);
+
+            window.ID5.numberOfInitsCalled.should.equal(1);
+            done();
+        })
+
         it('should call ID5.init twice on userLogoutComplete', function(done){
             var user = {
                 getUserIdentities: function () {
@@ -157,7 +173,7 @@ describe('ID5 Forwarder', function () {
                     return {
                         userIdentities: {
                             email: 'test@email.com',
-                            phone: '123-456-7890',
+                            mobile_number: '123-456-7890',
                         }
                     }
                 },
@@ -166,9 +182,81 @@ describe('ID5 Forwarder', function () {
             var pd = mParticle.forwarder.common.buildPartnerData(user)
 
             pd.should.exist;
-            pd.should.equal('MT03MzA2MmQ4NzI5MjZjMmE1NTZmMTdiMzZmNTBlMzI4ZGRmOWJmZjlkNDAzOTM5YmQxNGI2YzNiN2Y1YTMzZmMy')
             done();
         });
+
+        it ('should build null pd when build PartnerData is called with an empty users', function(done){
+            var user = {
+                getUserIdentities: function() {
+                    return {
+                        userIdentities: {}
+                    }
+                },
+            };
+            var pd = mParticle.forwarder.common.buildPartnerData(user)
+            debugger;
+            expect(pd).to.be.null;
+            done();
+        });
+
+        it ('should return null pd when buildPartnerData is called with a user only having an invalid phone number', function(done) {
+            var user = {
+                getUserIdentities: function() {
+                    return {
+                        userIdentities: {
+                            mobile_number: '1234567890112233'
+                        }
+                    }
+                },
+            }
+            var pd = mParticle.forwarder.common.buildPartnerData(user)
+
+            expect(pd).to.be.null;
+            done();
+        });
+
+        it ('should return null pd when buildPartnerData is called with a user only having an invalid email', function(done) {
+            var user = {
+                getUserIdentities: function() {
+                    return {
+                        userIdentities: {
+                            email: 'test@test@test.com'
+                        }
+                    }
+                },
+            }
+            var pd = mParticle.forwarder.common.buildPartnerData(user)
+
+            expect(pd).to.be.null;
+            done();
+        });
+
+        it ('should omit invalid identities when building PD when buildPartnerData is called', function(done) {
+            var user1 = {
+                getUserIdentities: function() {
+                    return {
+                        userIdentities: {
+                            email: 'test@test@test.com', //note: invalid email address
+                            mobile_number: '123-456-7890',
+                        }
+                    }
+                },
+            }
+            var user2 = {
+                getUserIdentities: function() {
+                    return {
+                        userIdentities: {
+                            mobile_number: '123-456-7890',
+                        }
+                    }
+                },
+            }
+            var pd1 = mParticle.forwarder.common.buildPartnerData(user1);
+            var pd2 = mParticle.forwarder.common.buildPartnerData(user2);
+
+            pd1.should.equal(pd2);
+            done();
+        })
 
         it ('should normalize an gmail when normalizeEmail is called', function(done) {
             var normalizedGmail = mParticle.forwarder.common.normalizeEmail('test+test.2@gmail.com');
@@ -186,11 +274,53 @@ describe('ID5 Forwarder', function () {
             done();
         });
 
+        it ('should return null when normalizeEmail is called with a null value', function(done){
+            var normalized = mParticle.forwarder.common.normalizeEmail()
+
+            expect(normalized).to.be.null;
+            done();
+        });
+
         it ('should normalize phone numbers when normalizePhone is called', function(done) {
             var normalizedPhone = mParticle.forwarder.common.normalizePhone('(123) 456-7890');
 
             normalizedPhone.should.exist;
-            normalizedPhone.should.equal('1234567890');
+            normalizedPhone.should.equal('+1234567890');
+            done();
+        });
+
+        it ('should return null when normalizePhone is called with a null value', function(done){
+            var normalizedPhone = mParticle.forwarder.common.normalizePhone();
+
+            expect(normalizedPhone).to.be.null;
+            done();
+        });
+
+        it ('should return true when a valid e.164 phone number is passed to validatePhone', function(done) {
+            var validated = mParticle.forwarder.common.validatePhone('+1234567890');
+
+            validated.should.equal(true);
+            done();
+        });
+
+        it ('should return false when an invalid e.164 phone number is passed to validatePhone', function(done) {
+            var validated = mParticle.forwarder.common.validatePhone('1234567890112233');
+
+            validated.should.equal(false);
+            done();
+        });
+
+        it ('should return true when a valid email is passed to validateEmail', function(done) {
+            var validated = mParticle.forwarder.common.validateEmail('test@test.com');
+
+            validated.should.equal(true);
+            done();
+        })
+
+        it ('should return false when an invalid email is passed to validateEmail', function(done) {
+            var validated = mParticle.forwarder.common.validateEmail('test@test@test.com')
+
+            validated.should.equal(false);
             done();
         })
     })

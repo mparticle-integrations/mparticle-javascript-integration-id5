@@ -26,14 +26,19 @@ Common.prototype.buildPartnerData = function (mParticleUser) {
     var pdKeys = {};
     var userIdentities = mParticleUser.getUserIdentities();
 
-    var email = userIdentities.userIdentities['email'];
-    if (email) {
-        pdKeys[1] = SHA256(this.normalizeEmail(email));
+    var email = this.normalizeEmail(userIdentities.userIdentities['email']);
+    var phone = this.normalizePhone(userIdentities.userIdentities['mobile_number']);
+
+    if (!email && !phone) {
+        return null;
     }
 
-    var phone = userIdentities.userIdentities['mobile_number'];
+    if (email) {
+        pdKeys[1] = SHA256(email);
+    }
+
     if (phone) {
-        pdKeys[2]= SHA256(this.normalizePhone(phone));
+        pdKeys[2]= SHA256(phone);
     }
 
     var pdRaw = Object.keys(pdKeys).map(function(key){
@@ -44,6 +49,9 @@ Common.prototype.buildPartnerData = function (mParticleUser) {
 }
 
 Common.prototype.normalizeEmail = function(email) {
+    if (!email || !this.validateEmail(email)) {
+        return null;
+    }
     var parts = email.split("@")
     var charactersToRemove = ['+', '.']
 
@@ -51,19 +59,29 @@ Common.prototype.normalizeEmail = function(email) {
         return email;
     }
 
-    parts[0]= replace(parts[0], charactersToRemove);
+    parts[0]= this.replace(parts[0], charactersToRemove);
 
     return parts.join('@');
 }
 
 Common.prototype.normalizePhone = function(phone) {
+    if (!phone) {
+        return null;
+    }
     var charactersToRemove = [' ', '-', '(', ')']
+    var normalizedPhone = this.replace(phone, charactersToRemove);
 
-    return replace(phone, charactersToRemove);
+    if (normalizedPhone[0] !== '+') {
+        normalizedPhone = '+' + normalizedPhone
+    }
+
+    if (!this.validatePhone(normalizedPhone)) {
+        return null;
+    }
+    return normalizedPhone;
 }
 
-function replace(string, targets) {
-    debugger;
+Common.prototype.replace = function(string, targets) {
     var newString = '';
     for(var i = 0; i < string.length; i++){
         var char = string[i];
@@ -72,5 +90,22 @@ function replace(string, targets) {
         }
     }
     return newString.toLowerCase();
+}
+
+Common.prototype.validateEmail = function(email){
+    if (!email) {
+        return false;
+    }
+    var emailRegex =  /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+}
+
+Common.prototype.validatePhone = function(phone) {
+    if (!phone){
+        return false;
+    }
+    var e164Regex = /^\+?[1-9]\d{1,14}$/;
+
+    return e164Regex.test(phone);
 }
 module.exports = Common;
