@@ -14,12 +14,8 @@ Common.prototype.logId5Id = function (id5Id) {
 
     //Sets user attribute if ID is unsent.
     //This function will be updated once the decryption architecture is finalized.
-    //The ID may need to be sent as custom event.
-    if (this.id5IdSent === false){
-        var currentUser = mParticle.Identity.getCurrentUser();
-        currentUser.setUserAttribute('ID5ID', id5Id);
-        this.id5IdSent = true;
-    }
+    //TO-DO: Log the ID5 ID to correct location
+
 };
 
 Common.prototype.buildPartnerData = function (mParticleUser) {

@@ -157,16 +157,6 @@ describe('ID5 Forwarder', function () {
 
 
     describe('Common Functions', function() {
-        it ('should log a user attribute when logId5 is called', function(done) {
-            mParticle.forwarder.common.logId5Id("testId");
-
-            var attributes = mParticle.Identity.getCurrentUser().getAllUserAttributes()
-
-            attributes.ID5ID.should.exist;
-            attributes.ID5ID.should.equal("testId")
-            done();
-        });
-
         it ('should build pd when buildPartnerData is called with a user', function(done) {
             var user = {
                 getUserIdentities: function() {
