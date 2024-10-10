@@ -1,58 +1,7 @@
 /* eslint-disable no-undef*/
 describe('ID5 Forwarder', function () {
     // -------------------DO NOT EDIT ANYTHING BELOW THIS LINE-----------------------
-    var MessageType = {
-            SessionStart: 1,
-            SessionEnd: 2,
-            PageView: 3,
-            PageEvent: 4,
-            CrashReport: 5,
-            OptOut: 6,
-            AppStateTransition: 10,
-            Profile: 14,
-            Commerce: 16
-        },
-        EventType = {
-            Unknown: 0,
-            Navigation: 1,
-            Location: 2,
-            Search: 3,
-            Transaction: 4,
-            UserContent: 5,
-            UserPreference: 6,
-            Social: 7,
-            Other: 8,
-            Media: 9,
-            getName: function() {
-                return 'blahblah';
-            }
-        },
-        ProductActionType = {
-            Unknown: 0,
-            AddToCart: 1,
-            RemoveFromCart: 2,
-            Checkout: 3,
-            CheckoutOption: 4,
-            Click: 5,
-            ViewDetail: 6,
-            Purchase: 7,
-            Refund: 8,
-            AddToWishlist: 9,
-            RemoveFromWishlist: 10
-        },
-        IdentityType = {
-            Other: 0,
-            CustomerId: 1,
-            Facebook: 2,
-            Twitter: 3,
-            Google: 4,
-            Microsoft: 5,
-            Yahoo: 6,
-            Email: 7,
-            Alias: 8,
-            FacebookCustomAudienceId: 9,
-        },
-        ReportingService = function () {
+    var ReportingService = function () {
             var self = this;
 
             this.id = null;
@@ -73,69 +22,59 @@ describe('ID5 Forwarder', function () {
     // -------------------DO NOT EDIT ANYTHING ABOVE THIS LINE-----------------------
     // -------------------START EDITING BELOW:-----------------------
     // -------------------mParticle stubs - Add any additional stubbing to our methods as needed-----------------------
+    var userAttributes = {};
+
     mParticle.Identity = {
         getCurrentUser: function() {
             return {
                 getMPID: function() {
                     return '123';
-                }
+                },
+                setUserAttribute: function(key, value){
+                    userAttributes[key]= value
+                },
+                getAllUserAttributes: function() {
+                    return userAttributes;
+                },
 
             };
         }
     };
     // -------------------START EDITING BELOW:-----------------------
-    var MockID5Forwarder = function() {
+    var MockID5 = function() {
         var self = this;
 
         // create properties for each type of event you want tracked, see below for examples
         this.trackCustomEventCalled = false;
         this.logPurchaseEventCalled = false;
-        this.initializeCalled = false;
+        this.isInitialized = false;
+        this.initCalled = false;
+        this.numberOfInitsCalled = 0;
+        this.getUserIdCalled = false;
 
-        this.trackCustomName = null;
-        this.logPurchaseName = null;
-        this.apiKey = null;
-        this.appId = null;
-        this.userId = null;
-        this.userAttributes = {};
-        this.userIdField = null;
-
-        this.eventProperties = [];
-        this.purchaseEventProperties = [];
+        this.pd = null;
+        this.partnerId = null;
+        this.configurationOptions = null;
 
         // stub your different methods to ensure they are being called properly
-        this.initialize = function(appId, apiKey) {
-            self.initializeCalled = true;
-            self.apiKey = apiKey;
-            self.appId = appId;
+        this.init = function(id5Options) {
+            self.initCalled = true;
+            self.numberOfInitsCalled += 1;
+            self.partnerId = id5Options.partnerId;
+            self.pd = id5Options.pd
+            return this;
         };
 
-        this.stubbedTrackingMethod = function(name, eventProperties){
-            self.trackCustomEventCalled = true;
-            self.trackCustomName = name;
-            self.eventProperties.push(eventProperties);
-            // Return true to indicate event should be reported
-            return true;
+        this.onAvailable = function(callback) {
+            return callback(self)
         };
 
-        this.stubbedUserAttributeSettingMethod = function(userAttributes) {
-            self.userId = id;
-            userAttributes = userAttributes || {};
-            if (Object.keys(userAttributes).length) {
-                for (var key in userAttributes) {
-                    if (userAttributes[key] === null) {
-                        delete self.userAttributes[key];
-                    }
-                    else {
-                        self.userAttributes[key] = userAttributes[key];
-                    }
-                }
-            }
-        };
+        this.getUserId = function() {
+            self.getUserIdCalled = true;
+            return 'ID5*testtesttesttest'
+        }
 
-        this.stubbedUserLoginMethod = function(id) {
-            self.userId = id;
-        };
+        return self;
     };
 
     before(function () {
@@ -143,136 +82,236 @@ describe('ID5 Forwarder', function () {
     });
 
     beforeEach(function() {
-        window.MockID5Forwarder = new MockID5Forwarder();
+        window.ID5 = new MockID5();
         // Include any specific settings that is required for initializing your SDK here
         var sdkSettings = {
-            clientKey: '123456',
-            appId: 'abcde',
-            userIdField: 'customerId'
+            partnerId: 1234,
         };
-        // You may require userAttributes or userIdentities to be passed into initialization
-        var userAttributes = {
-            color: 'green'
-        };
-        var userIdentities = [{
-            Identity: 'customerId',
-            Type: IdentityType.CustomerId
-        }, {
-            Identity: 'email',
-            Type: IdentityType.Email
-        }, {
-            Identity: 'facebook',
-            Type: IdentityType.Facebook
-        }];
 
         // The third argument here is a boolean to indicate that the integration is in test mode to avoid loading any third party scripts. Do not change this value.
-        mParticle.forwarder.init(sdkSettings, reportService.cb, true, null, userAttributes, userIdentities);
+        mParticle.forwarder.init(sdkSettings, reportService.cb, true);
     });
 
-    it('should log event', function(done) {
-        // mParticle.forwarder.process({
-        //     EventDataType: MessageType.PageEvent,
-        //     EventName: 'Test Event',
-        //     EventAttributes: {
-        //         label: 'label',
-        //         value: 200,
-        //         category: 'category'
-        //     }
-        // });
 
-        // window.MockID5Forwarder.eventProperties[0].label.should.equal('label');
-        // window.MockID5Forwarder.eventProperties[0].value.should.equal(200);
+    describe('Initialization', function() {
+        it('should call ID5.init', function(done) {
+            window.ID5.initCalled.should.equal(true);
+            done();
+        });
 
-        done();
-    });
+        it('should call getUserId', function(done) {
+            window.ID5.getUserIdCalled.should.equal(true);
+            done();
+        });
+    })
 
-    it('should log page view', function(done) {
-        // mParticle.forwarder.process({
-        //     EventDataType: MessageType.PageView,
-        //     EventName: 'test name',
-        //     EventAttributes: {
-        //         attr1: 'test1',
-        //         attr2: 'test2'
-        //     }
-        // });
-        //
-        // window.MockID5Forwarder.trackCustomEventCalled.should.equal(true);
-        // window.MockID5Forwarder.trackCustomName.should.equal('test name');
-        // window.MockID5Forwarder.eventProperties[0].attr1.should.equal('test1');
-        // window.MockID5Forwarder.eventProperties[0].attr2.should.equal('test2');
+    describe('Identity Handling', function() {
+        it('should call ID5.init twice on userLoginComplete', function(done){
+            var user = {
+                getUserIdentities: function () {
+                    return {
+                        userIdentities: {
+                            email: 'test@email.com',
+                        },
+                    };
+                },
+            };
+            mParticle.forwarder.onLoginComplete(user);
 
-        done();
-    });
+            window.ID5.numberOfInitsCalled.should.equal(2);
+            done();
+        });
 
-    it('should log a product purchase commerce event', function(done) {
-        // mParticle.forwarder.process({
-        //     EventName: 'Test Purchase Event',
-        //     EventDataType: MessageType.Commerce,
-        //     EventCategory: EventType.ProductPurchase,
-        //     ProductAction: {
-        //         ProductActionType: ProductActionType.Purchase,
-        //         ProductList: [
-        //             {
-        //                 Sku: '12345',
-        //                 Name: 'iPhone 6',
-        //                 Category: 'Phones',
-        //                 Brand: 'iPhone',
-        //                 Variant: '6',
-        //                 Price: 400,
-        //                 TotalAmount: 400,
-        //                 CouponCode: 'coupon-code',
-        //                 Quantity: 1
-        //             }
-        //         ],
-        //         TransactionId: 123,
-        //         Affiliation: 'my-affiliation',
-        //         TotalAmount: 450,
-        //         TaxAmount: 40,
-        //         ShippingAmount: 10,
-        //         CouponCode: null
-        //     }
-        // });
-        //
-        // window.MockID5Forwarder.trackCustomEventCalled.should.equal(true);
-        // window.MockID5Forwarder.trackCustomName.should.equal('Purchase');
-        //
-        // window.MockID5Forwarder.eventProperties[0].Sku.should.equal('12345');
-        // window.MockID5Forwarder.eventProperties[0].Name.should.equal('iPhone 6');
-        // window.MockID5Forwarder.eventProperties[0].Category.should.equal('Phones');
-        // window.MockID5Forwarder.eventProperties[0].Brand.should.equal('iPhone');
-        // window.MockID5Forwarder.eventProperties[0].Variant.should.equal('6');
-        // window.MockID5Forwarder.eventProperties[0].Price.should.equal(400);
-        // window.MockID5Forwarder.eventProperties[0].TotalAmount.should.equal(400);
-        // window.MockID5Forwarder.eventProperties[0].CouponCode.should.equal('coupon-code');
-        // window.MockID5Forwarder.eventProperties[0].Quantity.should.equal(1);
+        it('should call ID5.init only once on userLoginComplete with a user without email or phone', function(done){
+            var user = {
+                getUserIdentities: function () {
+                    return {
+                        userIdentities: {
+                            customerId: 'testId1234',
+                        },
+                    };
+                },
+            };
+            mParticle.forwarder.onLoginComplete(user);
 
-        done();
-    });
+            window.ID5.numberOfInitsCalled.should.equal(1);
+            done();
+        })
 
-    it('should set customer id user identity on user identity change', function(done) {
-        // var fakeUserStub = {
-        //     getUserIdentities: function() {
-        //         return {
-        //             userIdentities: {
-        //                 customerid: '123'
-        //             }
-        //         };
-        //     },
-        //     getMPID: function() {
-        //         return 'testMPID';
-        //     },
-        //     setUserAttribute: function() {
-        //
-        //     },
-        //     removeUserAttribute: function() {
-        //
-        //     }
-        // };
-        //
-        // mParticle.forwarder.onUserIdentified(fakeUserStub);
-        //
-        // window.MockID5Forwarder.userId.should.equal('123');
+        it('should call ID5.init twice on userLogoutComplete', function(done){
+            var user = {
+                getUserIdentities: function () {
+                    return {
+                        userIdentities: {
+                            email: 'test@email.com',
+                        },
+                    };
+                },
+            };
+            mParticle.forwarder.onLogoutComplete(user);
 
-        done();
-    });
+            window.ID5.numberOfInitsCalled.should.equal(2);
+            done();
+        });
+    })
+
+
+    describe('Common Functions', function() {
+        it ('should build pd when buildPartnerData is called with a user', function(done) {
+            var user = {
+                getUserIdentities: function() {
+                    return {
+                        userIdentities: {
+                            email: 'test@email.com',
+                            mobile_number: '123-456-7890',
+                        }
+                    }
+                },
+            };
+
+            var pd = mParticle.forwarder.common.buildPartnerData(user)
+
+            pd.should.exist;
+            done();
+        });
+
+        it ('should build null pd when build PartnerData is called with an empty users', function(done){
+            var user = {
+                getUserIdentities: function() {
+                    return {
+                        userIdentities: {}
+                    }
+                },
+            };
+            var pd = mParticle.forwarder.common.buildPartnerData(user)
+            debugger;
+            expect(pd).to.be.null;
+            done();
+        });
+
+        it ('should return null pd when buildPartnerData is called with a user only having an invalid phone number', function(done) {
+            var user = {
+                getUserIdentities: function() {
+                    return {
+                        userIdentities: {
+                            mobile_number: '1234567890112233'
+                        }
+                    }
+                },
+            }
+            var pd = mParticle.forwarder.common.buildPartnerData(user)
+
+            expect(pd).to.be.null;
+            done();
+        });
+
+        it ('should return null pd when buildPartnerData is called with a user only having an invalid email', function(done) {
+            var user = {
+                getUserIdentities: function() {
+                    return {
+                        userIdentities: {
+                            email: 'test@test@test.com'
+                        }
+                    }
+                },
+            }
+            var pd = mParticle.forwarder.common.buildPartnerData(user)
+
+            expect(pd).to.be.null;
+            done();
+        });
+
+        it ('should omit invalid identities when building PD when buildPartnerData is called', function(done) {
+            var user1 = {
+                getUserIdentities: function() {
+                    return {
+                        userIdentities: {
+                            email: 'test@test@test.com', //note: invalid email address
+                            mobile_number: '123-456-7890',
+                        }
+                    }
+                },
+            }
+            var user2 = {
+                getUserIdentities: function() {
+                    return {
+                        userIdentities: {
+                            mobile_number: '123-456-7890',
+                        }
+                    }
+                },
+            }
+            var pd1 = mParticle.forwarder.common.buildPartnerData(user1);
+            var pd2 = mParticle.forwarder.common.buildPartnerData(user2);
+
+            pd1.should.equal(pd2);
+            done();
+        })
+
+        it ('should normalize an gmail when normalizeEmail is called', function(done) {
+            var normalizedGmail = mParticle.forwarder.common.normalizeEmail('test+test.2@gmail.com');
+
+            normalizedGmail.should.exist;
+            normalizedGmail.should.equal('testtest2@gmail.com')
+            done();
+        });
+
+        it ('should not normalize an non-gmail when normalizeEmail is called', function(done) {
+            var normalizedOther = mParticle.forwarder.common.normalizeEmail('test+test.2@test.com');
+
+            normalizedOther.should.exist;
+            normalizedOther.should.equal('test+test.2@test.com');
+            done();
+        });
+
+        it ('should return null when normalizeEmail is called with a null value', function(done){
+            var normalized = mParticle.forwarder.common.normalizeEmail()
+
+            expect(normalized).to.be.null;
+            done();
+        });
+
+        it ('should normalize phone numbers when normalizePhone is called', function(done) {
+            var normalizedPhone = mParticle.forwarder.common.normalizePhone('(123) 456-7890');
+
+            normalizedPhone.should.exist;
+            normalizedPhone.should.equal('+1234567890');
+            done();
+        });
+
+        it ('should return null when normalizePhone is called with a null value', function(done){
+            var normalizedPhone = mParticle.forwarder.common.normalizePhone();
+
+            expect(normalizedPhone).to.be.null;
+            done();
+        });
+
+        it ('should return true when a valid e.164 phone number is passed to validatePhone', function(done) {
+            var validated = mParticle.forwarder.common.validatePhone('+1234567890');
+
+            validated.should.equal(true);
+            done();
+        });
+
+        it ('should return false when an invalid e.164 phone number is passed to validatePhone', function(done) {
+            var validated = mParticle.forwarder.common.validatePhone('1234567890112233');
+
+            validated.should.equal(false);
+            done();
+        });
+
+        it ('should return true when a valid email is passed to validateEmail', function(done) {
+            var validated = mParticle.forwarder.common.validateEmail('test@test.com');
+
+            validated.should.equal(true);
+            done();
+        })
+
+        it ('should return false when an invalid email is passed to validateEmail', function(done) {
+            var validated = mParticle.forwarder.common.validateEmail('test@test@test.com')
+
+            validated.should.equal(false);
+            done();
+        })
+    })
 });

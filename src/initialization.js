@@ -9,33 +9,39 @@ var initialization = {
     userIdentities example: { 1: 'customerId', 2: 'facebookId', 7: 'emailid@email.com' }
     additional identityTypes can be found at https://github.com/mParticle/mparticle-sdk-javascript/blob/master-v2/src/types.js#L88-L101
 */
-    initForwarder: function(forwarderSettings, testMode, userAttributes, userIdentities, processEvent, eventQueue, isInitialized, common, appVersion, appName, customFlags, clientId) {
+    initForwarder: function(forwarderSettings, testMode, userAttributes, userIdentities, processEvent, eventQueue, isInitialized, common) {
         /* `forwarderSettings` contains your SDK specific settings such as apiKey that your customer needs in order to initialize your SDK properly */
 
         if (!testMode) {
             /* Load your Web SDK here using a variant of your snippet from your readme that your customers would generally put into their <head> tags
                Generally, our integrations create script tags and append them to the <head>. Please follow the following format as a guide:
             */
+            //ID5 docs on initialization can be found here: https://github.com/id5io/id5-api.js/blob/master/README.md
+            var id5Script = document.createElement('script');
+            id5Script.src = 'https://cdn.id5-sync.com/api/1.0/id5-api.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(id5Script);
 
-            // var clientScript = document.createElement('script');
-            // clientScript.type = 'text/javascript';
-            // clientScript.async = true;
-            // clientScript.src = 'https://www.clientscript.com/static/clientSDK.js';   // <---- Update this to be your script
-            // (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(clientScript);
-            // clientScript.onload = function() {
-            //     if (clientSDKObject && eventQueue.length > 0) {
-            //         // Process any events that may have been queued up while forwarder was being initialized.
-            //         for (var i = 0; i < eventQueue.length; i++) {
-            //             processEvent(eventQueue[i]);
-            //         }
-            //          // now that each queued event is processed, we empty the eventQueue
-            //         eventQueue = [];
-            //     }
-            //    clientSDKObject.initialize(forwarderSettings.apiKey);
-            // };
+            common.id5Id = null;
+            common.id5IdSent = false;
+            common.partnerId = forwarderSettings.partnerId;
+
+            id5Script.onload = function() {
+                isInitialized = true;
+
+                var id5Instance = window.ID5.init({partnerId: common.partnerId})
+
+                id5Instance.onAvailable(function(status){
+                    common.logId5Id(status.getUserId());
+                }.bind(common));
+            };
         } else {
-            // For testing, you should fill out this section in order to ensure any required initialization calls are made,
-            // clientSDKObject.initialize(forwarderSettings.apiKey)
+            isInitialized = true;
+
+            var id5Instance = window.ID5.init({partnerId: common.partnerId})
+
+            id5Instance.onAvailable(function(status){
+                common.logId5Id(status.getUserId());
+            }.bind(common));
         }
     }
 };

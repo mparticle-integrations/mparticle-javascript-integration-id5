@@ -1,8 +1,8 @@
 var sessionHandler = {
-    onSessionStart: function(event) {
-        
+    onSessionStart: function() {
+
     },
-    onSessionEnd: function(event) {
+    onSessionEnd: function() {
 
     }
 };

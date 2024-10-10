@@ -21,32 +21,42 @@ For more userIdentity types, see https://docs.mparticle.com/developers/sdk/web/i
 function IdentityHandler(common) {
     this.common = common || {};
 }
-IdentityHandler.prototype.onUserIdentified = function(mParticleUser) {};
-IdentityHandler.prototype.onIdentifyComplete = function(
-    mParticleUser,
-    identityApiRequest
-) {};
+IdentityHandler.prototype.onUserIdentified = function() {};
+IdentityHandler.prototype.onIdentifyComplete = function() {};
+
+//Must re-initialize ID5 with partner identities(pd) in the config to collect an updated ID5 ID
 IdentityHandler.prototype.onLoginComplete = function(
-    mParticleUser,
-    identityApiRequest
-) {};
+    mParticleUser
+) {
+    var partnerData = this.common.buildPartnerData(mParticleUser);
+
+    if (partnerData) {
+        var id5Instance = window.ID5.init({partnerId: this.common.partnerId, pd: partnerData})
+        var logId5Id = this.common.logId5Id;
+
+        id5Instance.onAvailable(function(status){
+            logId5Id(status.getUserId());
+        }.bind(logId5Id));
+    }
+};
+
+//Must re-initialize ID5 without partner identities (pd) in the config to revert to an anonymous ID5 ID
 IdentityHandler.prototype.onLogoutComplete = function(
-    mParticleUser,
-    identityApiRequest
-) {};
-IdentityHandler.prototype.onModifyComplete = function(
-    mParticleUser,
-    identityApiRequest
-) {};
+) {
+    var id5Instance = window.ID5.init({partnerId: this.common.partnerId})
+    var logId5Id = this.common.logId5Id;
+
+    id5Instance.onAvailable(function(status){
+        logId5Id(status.getUserId());
+    }.bind(logId5Id));
+};
+
+IdentityHandler.prototype.onModifyComplete = function() {};
 
 /*  In previous versions of the mParticle web SDK, setting user identities on
     kits is only reachable via the onSetUserIdentity method below. We recommend
     filling out `onSetUserIdentity` for maximum compatibility
 */
-IdentityHandler.prototype.onSetUserIdentity = function(
-    forwarderSettings,
-    id,
-    type
-) {};
+IdentityHandler.prototype.onSetUserIdentity = function() {};
 
 module.exports = IdentityHandler;
