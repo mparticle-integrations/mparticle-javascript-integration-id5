@@ -2,8 +2,7 @@ module.exports = {
     branches: ['main'],
     tagFormat: 'v${version}',
     repositoryUrl:
-        // TODO: Update this to your repository URL
-        'https://github.com/mparticle-integrations/mparticle-javascript-integration-example',
+        'https://github.com/mparticle-integrations/mparticle-javascript-integration-id5',
     plugins: [
         [
             '@semantic-release/commit-analyzer',
@@ -46,7 +45,7 @@ module.exports = {
             '@semantic-release/github',
             // TODO: Update this to your kit name
             {
-                assets: ['dist/XYZ-kit.common.js', 'dist/XYZ-kit.iife.js'],
+                assets: ['dist/XYZ-kit.common.js', 'dist/ID5kit.iife.js'],
             },
         ],
         [
