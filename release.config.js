@@ -2,7 +2,6 @@ module.exports = {
     branches: ['main'],
     tagFormat: 'v${version}',
     repositoryUrl:
-        // TODO: Update this to your repository URL
         'https://github.com/mparticle-integrations/mparticle-javascript-integration-id5',
     plugins: [
         [
@@ -44,9 +43,8 @@ module.exports = {
         ],
         [
             '@semantic-release/github',
-            // TODO: Update this to your kit name
             {
-                assets: ['dist/XYZ-kit.common.js', 'dist/ID5kit.iife.js'],
+                assets: ['dist/ID5kit.common.js', 'dist/ID5kit.iife.js'],
             },
         ],
         [
