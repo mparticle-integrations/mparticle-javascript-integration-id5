@@ -43,9 +43,8 @@ module.exports = {
         ],
         [
             '@semantic-release/github',
-            // TODO: Update this to your kit name
             {
-                assets: ['dist/XYZ-kit.common.js', 'dist/ID5kit.iife.js'],
+                assets: ['dist/ID5kit.common.js', 'dist/ID5kit.iife.js'],
             },
         ],
         [
