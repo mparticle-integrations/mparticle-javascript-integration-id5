@@ -24,8 +24,6 @@ var initialization = {
             id5Script.src = 'https://cdn.id5-sync.com/api/1.0/id5-api.js';
             (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(id5Script);
 
-
-
             id5Script.onload = function() {
                 isInitialized = true;
 
