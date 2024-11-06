@@ -6,7 +6,7 @@ Common.prototype.exampleMethod = function () {
 }
 
 Common.prototype.logId5Id = function (id5Id) {
-    if (id5Id == undefined) {
+    if (!id5Id) {
         return;
     }
 
