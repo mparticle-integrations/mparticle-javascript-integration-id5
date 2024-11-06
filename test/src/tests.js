@@ -22,8 +22,10 @@ describe('ID5 Forwarder', function () {
     // -------------------DO NOT EDIT ANYTHING ABOVE THIS LINE-----------------------
     // -------------------START EDITING BELOW:-----------------------
     // -------------------mParticle stubs - Add any additional stubbing to our methods as needed-----------------------
+    var Id5ModuleId = 248;
     var userAttributes = {};
     var integrationAttributes = {};
+
     mParticle.Identity = {
         getCurrentUser: function() {
             return {
@@ -190,7 +192,7 @@ describe('ID5 Forwarder', function () {
                 },
             };
             var pd = mParticle.forwarder.common.buildPartnerData(user)
-            debugger;
+
             expect(pd).to.be.null;
             done();
         });
@@ -322,9 +324,17 @@ describe('ID5 Forwarder', function () {
 
         it ('should log an integration attribute when logId5Id is called', function(done) {
             mParticle.forwarder.common.logId5Id("testId");
-            var attributes = integrationAttributes[248];
+            var attributes = integrationAttributes[Id5ModuleId];
             attributes['encryptedId5Id'].should.equal('testId');
             attributes['id5IdType'].should.equal('other_5')
+            done();
+        })
+
+        it ('should not log an integration attribute when logId5Id is called with a null or undefined value', function(done) {
+            mParticle.forwarder.common.logId5Id(null);
+            integrationAttributes[248].should.be.null;
+            mParticle.forwarder.common.logId5Id(undefined);
+            integrationAttributes[248].should.be.null;
             done();
         })
     })

@@ -6,9 +6,15 @@ Common.prototype.exampleMethod = function () {
 }
 
 Common.prototype.logId5Id = function (id5Id) {
-    var integrationAttributes = {};
-    integrationAttributes['encryptedId5Id'] = id5Id;
-    integrationAttributes['id5IdType'] = this.id5IdType;
+    if (id5Id == undefined) {
+        return;
+    }
+
+    var integrationAttributes = {
+        encryptedId5Id: id5Id,
+        id5IdType: this.id5IdType,
+    };
+
     window.mParticle.setIntegrationAttributes(this.moduleId, integrationAttributes);
 };
 
