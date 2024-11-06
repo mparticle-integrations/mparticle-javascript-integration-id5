@@ -11,6 +11,9 @@ var initialization = {
 */
     initForwarder: function(forwarderSettings, testMode, userAttributes, userIdentities, processEvent, eventQueue, isInitialized, common) {
         /* `forwarderSettings` contains your SDK specific settings such as apiKey that your customer needs in order to initialize your SDK properly */
+        common.partnerId = forwarderSettings.partnerId;
+        common.id5IdType = forwarderSettings.id5IdType;
+        common.moduleId = this.moduleId;
 
         if (!testMode) {
             /* Load your Web SDK here using a variant of your snippet from your readme that your customers would generally put into their <head> tags
@@ -20,10 +23,6 @@ var initialization = {
             var id5Script = document.createElement('script');
             id5Script.src = 'https://cdn.id5-sync.com/api/1.0/id5-api.js';
             (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(id5Script);
-
-            common.id5Id = null;
-            common.id5IdSent = false;
-            common.partnerId = forwarderSettings.partnerId;
 
             id5Script.onload = function() {
                 isInitialized = true;

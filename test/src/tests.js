@@ -22,7 +22,9 @@ describe('ID5 Forwarder', function () {
     // -------------------DO NOT EDIT ANYTHING ABOVE THIS LINE-----------------------
     // -------------------START EDITING BELOW:-----------------------
     // -------------------mParticle stubs - Add any additional stubbing to our methods as needed-----------------------
+    var Id5ModuleId = 248;
     var userAttributes = {};
+    var integrationAttributes = {};
 
     mParticle.Identity = {
         getCurrentUser: function() {
@@ -40,6 +42,11 @@ describe('ID5 Forwarder', function () {
             };
         }
     };
+
+    mParticle.setIntegrationAttributes = function(id, attributes) {
+        integrationAttributes[id] = attributes;
+    }
+
     // -------------------START EDITING BELOW:-----------------------
     var MockID5 = function() {
         var self = this;
@@ -86,6 +93,7 @@ describe('ID5 Forwarder', function () {
         // Include any specific settings that is required for initializing your SDK here
         var sdkSettings = {
             partnerId: 1234,
+            id5IdType: "other_5"
         };
 
         // The third argument here is a boolean to indicate that the integration is in test mode to avoid loading any third party scripts. Do not change this value.
@@ -184,7 +192,7 @@ describe('ID5 Forwarder', function () {
                 },
             };
             var pd = mParticle.forwarder.common.buildPartnerData(user)
-            debugger;
+
             expect(pd).to.be.null;
             done();
         });
@@ -311,6 +319,22 @@ describe('ID5 Forwarder', function () {
             var validated = mParticle.forwarder.common.validateEmail('test@test@test.com')
 
             validated.should.equal(false);
+            done();
+        })
+
+        it ('should log an integration attribute when logId5Id is called', function(done) {
+            mParticle.forwarder.common.logId5Id("testId");
+            var attributes = integrationAttributes[Id5ModuleId];
+            attributes['encryptedId5Id'].should.equal('testId');
+            attributes['id5IdType'].should.equal('other_5')
+            done();
+        })
+
+        it ('should not log an integration attribute when logId5Id is called with a null or undefined value', function(done) {
+            mParticle.forwarder.common.logId5Id(null);
+            integrationAttributes[248].should.be.null;
+            mParticle.forwarder.common.logId5Id(undefined);
+            integrationAttributes[248].should.be.null;
             done();
         })
     })

@@ -6,16 +6,16 @@ Common.prototype.exampleMethod = function () {
 }
 
 Common.prototype.logId5Id = function (id5Id) {
-    //Checks and saves ID5 ID if it is new
-    if (id5Id !== this.id5Id) {
-        this.id5Id = id5Id;
-        this.id5IdSent = false
+    if (!id5Id) {
+        return;
     }
 
-    //Sets user attribute if ID is unsent.
-    //This function will be updated once the decryption architecture is finalized.
-    //TO-DO: Log the ID5 ID to correct location
+    var integrationAttributes = {
+        encryptedId5Id: id5Id,
+        id5IdType: this.id5IdType,
+    };
 
+    window.mParticle.setIntegrationAttributes(this.moduleId, integrationAttributes);
 };
 
 Common.prototype.buildPartnerData = function (mParticleUser) {
