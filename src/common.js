@@ -15,7 +15,7 @@ Common.prototype.logId5Id = function (id5Id) {
         id5IdType: this.id5IdType,
     };
 
-    window.mParticle.setIntegrationAttributes(this.moduleId, integrationAttributes);
+    window.mParticle.setIntegrationAttribute(248, integrationAttributes);
 };
 
 Common.prototype.buildPartnerData = function (mParticleUser) {
