@@ -1,5 +1,5 @@
 var SDKsettings = {
-    partnerId: 1747,
+    partnerId: 1234,
     id5IdType: "Other"
     /* fill in SDKsettings with any particular settings or options your sdk requires in order to
     initialize, this may be apiKey, projectId, primaryCustomerType, etc. These are passed
