@@ -1036,7 +1036,7 @@ var ID5Kit = (function (exports) {
 	        id5IdType: this.id5IdType,
 	    };
 
-	    window.mParticle.setIntegrationAttributes(this.moduleId, integrationAttributes);
+	    window.mParticle.setIntegrationAttribute(this.moduleId, integrationAttributes);
 	};
 
 	Common.prototype.buildPartnerData = function (mParticleUser) {
