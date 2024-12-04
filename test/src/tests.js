@@ -43,7 +43,7 @@ describe('ID5 Forwarder', function () {
         }
     };
 
-    mParticle.setIntegrationAttributes = function(id, attributes) {
+    mParticle.setIntegrationAttribute = function(id, attributes) {
         integrationAttributes[id] = attributes;
     }
 
