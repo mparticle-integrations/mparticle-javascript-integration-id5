@@ -1264,7 +1264,13 @@ IdentityHandler.prototype.onLoginComplete = function(
     var partnerData = this.common.buildPartnerData(mParticleUser);
 
     if (partnerData) {
-        var id5Instance = window.ID5.init({partnerId: this.common.partnerId, pd: partnerData});
+        var id5Instance = window.ID5.init({
+            partnerId: this.common.partnerId, 
+            pd: partnerData,
+            consentData: {
+                allowedVendors: [ '131', 'ID5-1747' ]
+              }
+        });
         var logId5Id = this.common.logId5Id;
 
         id5Instance.onAvailable(function(status){
@@ -1276,7 +1282,12 @@ IdentityHandler.prototype.onLoginComplete = function(
 //Must re-initialize ID5 without partner identities (pd) in the config to revert to an anonymous ID5 ID
 IdentityHandler.prototype.onLogoutComplete = function(
 ) {
-    var id5Instance = window.ID5.init({partnerId: this.common.partnerId});
+    var id5Instance = window.ID5.init({
+        partnerId: this.common.partnerId,
+        consentData: {
+            allowedVendors: [ '131', 'ID5-1747' ]
+          }
+    });
     var logId5Id = this.common.logId5Id;
 
     id5Instance.onAvailable(function(status){
@@ -1296,7 +1307,7 @@ var identityHandler = IdentityHandler;
 
 var initialization = {
     name: 'ID5',
-    moduleId: '248',
+    moduleId: 248,
     /*  ****** Fill out initForwarder to load your SDK ******
     Note that not all arguments may apply to your SDK initialization.
     These are passed from mParticle, but leave them even if they are not being used.
@@ -1322,7 +1333,12 @@ var initialization = {
 
             id5Script.onload = function() {
 
-                var id5Instance = window.ID5.init({partnerId: common.partnerId});
+                var id5Instance = window.ID5.init({
+                    partnerId: common.partnerId,
+                    consentData: {
+                        allowedVendors: [ '131', 'ID5-1747' ]
+                      }
+                });
 
                 id5Instance.onAvailable(function(status){
                     common.logId5Id(status.getUserId());
