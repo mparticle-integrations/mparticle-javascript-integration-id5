@@ -31,7 +31,7 @@ var initialization = {
                     partnerId: common.partnerId,
                     consentData: {
                         allowedVendors: [ '131', 'ID5-1747' ]
-                      }
+                    }
                 })
 
                 id5Instance.onAvailable(function(status){

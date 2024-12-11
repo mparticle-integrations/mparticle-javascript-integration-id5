@@ -36,7 +36,7 @@ IdentityHandler.prototype.onLoginComplete = function(
             pd: partnerData,
             consentData: {
                 allowedVendors: [ '131', 'ID5-1747' ]
-              }
+            }
         })
         var logId5Id = this.common.logId5Id;
 
@@ -53,7 +53,7 @@ IdentityHandler.prototype.onLogoutComplete = function(
         partnerId: this.common.partnerId,
         consentData: {
             allowedVendors: [ '131', 'ID5-1747' ]
-          }
+        }
     })
     var logId5Id = this.common.logId5Id;
 
