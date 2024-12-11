@@ -46,7 +46,7 @@ IdentityHandler.prototype.onLoginComplete = function(
     }
 };
 
-//Must re-initialize ID5 without partner identities (pd) in the config to revert to an anonymous ID5 ID
+//Must re-initialize ID5 without partner identities (pd) in the config to revert to an anonymous ID5 ID 
 IdentityHandler.prototype.onLogoutComplete = function(
 ) {
     var id5Instance = window.ID5.init({
