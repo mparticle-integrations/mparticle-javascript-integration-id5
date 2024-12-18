@@ -31,7 +31,13 @@ IdentityHandler.prototype.onLoginComplete = function(
     var partnerData = this.common.buildPartnerData(mParticleUser);
 
     if (partnerData) {
-        var id5Instance = window.ID5.init({partnerId: this.common.partnerId, pd: partnerData})
+        var id5Instance = window.ID5.init({
+            partnerId: this.common.partnerId, 
+            pd: partnerData,
+            consentData: {
+                allowedVendors: this.common.allowedVendors
+            }
+        })
         var logId5Id = this.common.logId5Id;
 
         id5Instance.onAvailable(function(status){
@@ -43,7 +49,12 @@ IdentityHandler.prototype.onLoginComplete = function(
 //Must re-initialize ID5 without partner identities (pd) in the config to revert to an anonymous ID5 ID
 IdentityHandler.prototype.onLogoutComplete = function(
 ) {
-    var id5Instance = window.ID5.init({partnerId: this.common.partnerId})
+    var id5Instance = window.ID5.init({
+        partnerId: this.common.partnerId,
+        consentData: {
+            allowedVendors: this.common.allowedVendors
+        }
+    })
     var logId5Id = this.common.logId5Id;
 
     id5Instance.onAvailable(function(status){
