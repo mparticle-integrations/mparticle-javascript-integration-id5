@@ -1,6 +1,7 @@
 var initialization = {
     name: 'ID5',
     moduleId: 248,
+    vendors: [ '131', 'ID5-1747' ],
     /*  ****** Fill out initForwarder to load your SDK ******
     Note that not all arguments may apply to your SDK initialization.
     These are passed from mParticle, but leave them even if they are not being used.
@@ -30,7 +31,7 @@ var initialization = {
                 var id5Instance = window.ID5.init({
                     partnerId: common.partnerId,
                     consentData: {
-                        allowedVendors: [ '131', 'ID5-1747' ]
+                        allowedVendors: this.vendors
                     }
                 })
 
