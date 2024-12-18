@@ -20,7 +20,6 @@ For more userIdentity types, see https://docs.mparticle.com/developers/sdk/web/i
 
 function IdentityHandler(common) {
     this.common = common || {};
-    this.allowedVendors = [ '131', 'ID5-1747' ];
 }
 IdentityHandler.prototype.onUserIdentified = function() {};
 IdentityHandler.prototype.onIdentifyComplete = function() {};
@@ -36,7 +35,7 @@ IdentityHandler.prototype.onLoginComplete = function(
             partnerId: this.common.partnerId, 
             pd: partnerData,
             consentData: {
-                allowedVendors: this.allowedVendors
+                allowedVendors: this.common.allowedVendors
             }
         })
         var logId5Id = this.common.logId5Id;
@@ -53,7 +52,7 @@ IdentityHandler.prototype.onLogoutComplete = function(
     var id5Instance = window.ID5.init({
         partnerId: this.common.partnerId,
         consentData: {
-            allowedVendors: this.allowedVendors
+            allowedVendors: this.common.allowedVendors
         }
     })
     var logId5Id = this.common.logId5Id;

@@ -15,6 +15,7 @@ var initialization = {
         common.partnerId = forwarderSettings.partnerId;
         common.id5IdType = forwarderSettings.id5IdType;
         common.moduleId = this.moduleId;
+        common.allowedVendors = this.vendors;
 
         if (!testMode) {
             /* Load your Web SDK here using a variant of your snippet from your readme that your customers would generally put into their <head> tags
@@ -31,7 +32,7 @@ var initialization = {
                 var id5Instance = window.ID5.init({
                     partnerId: common.partnerId,
                     consentData: {
-                        allowedVendors: this.vendors
+                        allowedVendors: common.allowedVendors
                     }
                 })
 
