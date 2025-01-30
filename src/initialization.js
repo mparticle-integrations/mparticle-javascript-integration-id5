@@ -1,6 +1,7 @@
 var initialization = {
     name: 'ID5',
-    moduleId: '248',
+    moduleId: 248,
+    vendors: [ '131', 'ID5-1747' ],
     /*  ****** Fill out initForwarder to load your SDK ******
     Note that not all arguments may apply to your SDK initialization.
     These are passed from mParticle, but leave them even if they are not being used.
@@ -14,6 +15,7 @@ var initialization = {
         common.partnerId = forwarderSettings.partnerId;
         common.id5IdType = forwarderSettings.id5IdType;
         common.moduleId = this.moduleId;
+        common.allowedVendors = this.vendors;
 
         if (!testMode) {
             /* Load your Web SDK here using a variant of your snippet from your readme that your customers would generally put into their <head> tags
@@ -27,7 +29,12 @@ var initialization = {
             id5Script.onload = function() {
                 isInitialized = true;
 
-                var id5Instance = window.ID5.init({partnerId: common.partnerId})
+                var id5Instance = window.ID5.init({
+                    partnerId: common.partnerId,
+                    consentData: {
+                        allowedVendors: common.allowedVendors
+                    }
+                })
 
                 id5Instance.onAvailable(function(status){
                     common.logId5Id(status.getUserId());
