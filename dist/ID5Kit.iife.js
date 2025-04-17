@@ -1034,6 +1034,7 @@ var ID5Kit = (function (exports) {
 	    var integrationAttributes = {
 	        encryptedId5Id: id5Id,
 	        id5IdType: this.id5IdType,
+	        partnerId: this.partnerId.toString(),
 	    };
 
 	    window.mParticle.setIntegrationAttribute(this.moduleId, integrationAttributes);
