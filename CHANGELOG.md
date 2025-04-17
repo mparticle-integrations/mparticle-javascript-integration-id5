@@ -1,3 +1,10 @@
+## [1.0.4](https://github.com/mparticle-integrations/mparticle-javascript-integration-id5/compare/v1.0.3...v1.0.4) (2025-04-17)
+
+
+### Bug Fixes
+
+* pass partnerid as ia ([#19](https://github.com/mparticle-integrations/mparticle-javascript-integration-id5/issues/19)) ([ff36af2](https://github.com/mparticle-integrations/mparticle-javascript-integration-id5/commit/ff36af2358118452ed8df229348132add47cf85f))
+
 ## [1.0.3](https://github.com/mparticle-integrations/mparticle-javascript-integration-id5/compare/v1.0.2...v1.0.3) (2025-02-03)
 
 
