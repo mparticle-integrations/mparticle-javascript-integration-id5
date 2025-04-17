@@ -13,6 +13,7 @@ Common.prototype.logId5Id = function (id5Id) {
     var integrationAttributes = {
         encryptedId5Id: id5Id,
         id5IdType: this.id5IdType,
+        partnerId: this.partnerId.toString(),
     };
 
     window.mParticle.setIntegrationAttribute(this.moduleId, integrationAttributes);
